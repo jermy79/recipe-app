@@ -1,0 +1,20 @@
+.container {
+    display: flex;
+    align-items: center; /* Centers items vertically */
+    justify-content: flex-start;
+    margin:100px
+}
+
+.pic {
+    margin-right: 100px; /* Space between image and text */
+}
+
+.pic img {
+    width: 600px; /* Set the size of the image */
+    border-radius: 50%; /* Makes the image a circle */
+    object-fit: cover; /* Ensures the image scales nicely */
+}
+
+.welcomeText {
+    max-width: 700px; /* Optional: limit the width of the text */
+}
