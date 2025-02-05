@@ -1,7 +1,7 @@
 import React from 'react';
 import '../CSS/App.css';
 import '../CSS/Login.css'
-import food from'../media/foodLogin.jpg';
+import food from'../media/foodLogin.webp';
 
 const Login = () => {
     return (
