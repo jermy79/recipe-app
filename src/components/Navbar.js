@@ -27,7 +27,7 @@ const Navbar = () => {
       <div className={`navbar ${isMobile ? 'hidden' : ''}`}>
         <h1>RecipeApp</h1>
         <ul>
-          <li><Link to="/">Log In</Link></li>
+          <li><Link to="/login">Log In</Link></li>
         </ul>
       </div>
 
@@ -52,7 +52,7 @@ const Navbar = () => {
           ×
         </button>
         <ul>
-          <li><Link to="/" onClick={toggleMenu}>Home</Link></li>
+          <li><Link to="/login" onClick={toggleMenu}>Home</Link></li>
         </ul>
       </div>
     </>
