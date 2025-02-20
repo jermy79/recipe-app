@@ -16,8 +16,6 @@ const CreateRecipe = () => {
         const fetchUserData = async () => {
             const token = localStorage.getItem('authToken');
             
-            console.log('Token:', token);  // Log token to check if it's correctly set
-
             if (!token) {
                 navigate('/login');
                 return;
@@ -26,13 +24,11 @@ const CreateRecipe = () => {
             try {
                 const response = await fetch('http://localhost:4000/api/user', {
                     headers: {
-                        'Authorization': token  // Ensure "Bearer" is included
+                        'Authorization': token
                     }
                 });
 
                 const data = await response.json();
-                console.log('User data:', data);  // Log response data
-
                 if (response.ok) {
                     setUserId(data.id); // Set userId from the fetched data
                 } else {

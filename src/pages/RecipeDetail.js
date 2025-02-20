@@ -38,8 +38,6 @@ const RecipeDetail = () => {
                     }
                 });
                 const data = await response.json();
-                console.log('Fetched recipe:', data); // Debugging log
-
                 if (data && typeof data === 'object') {
                     setRecipe(data);
                 } else {
