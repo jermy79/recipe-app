@@ -1,0 +1,86 @@
+/* Create Recipe Page Styling */
+.createRecipeForm {
+    max-width: 700px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .createRecipeForm h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .createRecipeForm form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .createRecipeForm label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+    text-align: left;
+  }
+  
+  .createRecipeForm input,
+  .createRecipeForm textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .createRecipeForm textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+  
+  .createRecipeForm button {
+    background-color: #4CAF50;
+    color: white;
+    font-size: 1.1rem;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .createRecipeForm button:hover {
+    background-color: #45a049;
+  }
+  
+  .createRecipeForm button:focus {
+    outline: none;
+  }
+  
+  /* Responsive design for smaller screens */
+  @media (max-width: 768px) {
+    .createRecipeForm {
+      padding: 15px;
+    }
+  
+    .createRecipeForm h1 {
+      font-size: 2rem;
+    }
+  
+    .createRecipeForm input,
+    .createRecipeForm textarea {
+      font-size: 0.95rem;
+    }
+  
+    .createRecipeForm button {
+      font-size: 1rem;
+    }
+  }
+  

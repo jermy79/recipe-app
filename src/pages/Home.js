@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link for navigation
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
 import '../CSS/App.css';
-import '../CSS/Home.css'
+import '../CSS/Home.css';
 import Navbar from '../components/Navbar';
 
 const Home = () => {
     const [recipes, setRecipes] = useState([]);
+    const navigate = useNavigate(); // Hook for navigation
 
     useEffect(() => {
         // Fetch recipes from the backend
@@ -22,6 +23,14 @@ const Home = () => {
         fetchRecipes();
     }, []);
 
+    // Function to truncate ingredient list
+    const truncateIngredients = (ingredients, maxLength = 50) => {
+        if (!ingredients) return "No ingredients listed";
+        return ingredients.length > maxLength 
+            ? ingredients.substring(0, maxLength) + "..." 
+            : ingredients;
+    };
+
     return (
         <div>
             <Navbar />
@@ -31,19 +40,15 @@ const Home = () => {
             <div className="recipeList">
                 {recipes.length > 0 ? (
                     recipes.map((recipe) => (
-                        <div key={recipe.id} className="recipeCard">
+                        <div 
+                            key={recipe.id} 
+                            className="recipeCard"
+                            onClick={() => navigate(`/recipe/${recipe.id}`)} // Clickable card
+                        >
                             <h3>{recipe.title}</h3>
-                            <div className="recipeImage">
-                                {/* Link to the recipe details page */}
-                                <Link to={`/recipe/${recipe.id}`}>
-                                    {recipe.pictures && (
-                                        <img
-                                            src={recipe.pictures.split(',')[0]}
-                                            alt={recipe.title}
-                                        />
-                                    )}
-                                </Link>
-                            </div>
+                            <p className="ingredientPreview">
+                                {truncateIngredients(recipe.ingredients)}
+                            </p>
                         </div>
                     ))
                 ) : (

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import '../CSS/Navbar.css';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  // Check screen size and update state
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -21,17 +22,42 @@ const Navbar = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    navigate('/login');
+  };
+
+  const handleLogoClick = () => {
+    navigate('/home');
+  };
+
+  // Page-based navbar rules
+  const isCreatePage = location.pathname === '/create';
+  const isRecipePage = location.pathname.startsWith('/recipe/');
+
   return (
     <>
-      {/* Desktop Navigation (Bottom Right) */}
+      {/* Desktop Navigation */}
       <div className={`navbar ${isMobile ? 'hidden' : ''}`}>
-        <h1>RecipeApp</h1>
+        <h1 onClick={handleLogoClick} className="logo">RecipeApp</h1> {/* Logo always visible */}
         <ul>
-          <li><Link to="/login">Log In</Link></li>
+          {isCreatePage ? (
+            <li><button onClick={handleLogout}>Log Out</button></li> // Only Log Out
+          ) : isRecipePage ? (
+            <>
+              <li><Link to="/create">Create Recipe</Link></li> {/* Show Create Recipe */}
+              <li><button onClick={handleLogout}>Log Out</button></li>
+            </>
+          ) : (
+            <>
+              <li><Link to="/create">Create Recipe</Link></li>
+              <li><button onClick={handleLogout}>Log Out</button></li>
+            </>
+          )}
         </ul>
       </div>
 
-      {/* Mobile Hamburger Button (Top Right) */}
+      {/* Mobile Hamburger Button */}
       {isMobile && (
         <button 
           className="hamburger-btn" 
@@ -52,7 +78,20 @@ const Navbar = () => {
           ×
         </button>
         <ul>
-          <li><Link to="/login" onClick={toggleMenu}>Home</Link></li>
+          <li><h1 onClick={handleLogoClick} className="logo">RecipeApp</h1></li> {/* Logo in mobile menu */}
+          {isCreatePage ? (
+            <li><button onClick={() => { handleLogout(); toggleMenu(); }}>Log Out</button></li>
+          ) : isRecipePage ? (
+            <>
+              <li><Link to="/create" onClick={toggleMenu}>Create Recipe</Link></li>
+              <li><button onClick={() => { handleLogout(); toggleMenu(); }}>Log Out</button></li>
+            </>
+          ) : (
+            <>
+              <li><Link to="/create" onClick={toggleMenu}>Create Recipe</Link></li>
+              <li><button onClick={() => { handleLogout(); toggleMenu(); }}>Log Out</button></li>
+            </>
+          )}
         </ul>
       </div>
     </>

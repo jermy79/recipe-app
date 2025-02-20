@@ -1,8 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'; // Use to get the dynamic `id` from the URL
+import { useParams } from 'react-router-dom';
 import '../CSS/App.css';
-import '../CSS/RecipeDetail.css'
+import '../CSS/RecipeDetail.css';
 import Navbar from '../components/Navbar';
+
+// Helper function to replace newlines with <br /> tags
+const newlineToBreak = (text) => {
+    return text.split('\n').map((item, index) => (
+        <span key={index}>
+            {item}
+            <br />
+        </span>
+    ));
+};
 
 const RecipeDetail = () => {
     const { id } = useParams(); // Get the recipe ID from the URL
@@ -30,18 +40,10 @@ const RecipeDetail = () => {
             <Navbar />
             <div className="recipeDetail">
                 <h1>{recipe.title}</h1>
-                <div className="recipeImage">
-                    {recipe.pictures && (
-                        <img
-                            src={recipe.pictures.split(',')[0]}
-                            alt={recipe.title}
-                        />
-                    )}
-                </div>
                 <h3>Ingredients:</h3>
-                <p>{recipe.ingredients}</p>
+                <div>{newlineToBreak(recipe.ingredients)}</div>
                 <h3>Steps:</h3>
-                <p>{recipe.steps}</p>
+                <div>{newlineToBreak(recipe.steps)}</div>
             </div>
         </div>
     );

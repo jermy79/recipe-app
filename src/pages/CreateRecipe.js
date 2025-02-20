@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../CSS/App.css';
+import '../CSS/CreateRecipe.css';
 import Navbar from '../components/Navbar';
 
 const CreateRecipe = () => {
@@ -32,8 +33,9 @@ const CreateRecipe = () => {
             });
 
             if (response.ok) {
-                // Redirect to the home page or recipe list page after the recipe is created
-                history.push('/');
+                const newRecipe = await response.json();
+                // Redirect to the new recipe page after creation
+                history(`/recipe/${newRecipe.id}`);
             } else {
                 alert('Error adding recipe');
             }
@@ -63,6 +65,7 @@ const CreateRecipe = () => {
                             value={ingredients}
                             onChange={(e) => setIngredients(e.target.value)}
                             required
+                            rows="4"
                         />
                     </div>
                     <div>
@@ -71,16 +74,10 @@ const CreateRecipe = () => {
                             value={steps}
                             onChange={(e) => setSteps(e.target.value)}
                             required
+                            rows="4"
                         />
                     </div>
                     <div>
-                        <label>Pictures (comma-separated URLs):</label>
-                        <input
-                            type="text"
-                            value={pictures}
-                            onChange={(e) => setPictures(e.target.value)}
-                            required
-                        />
                     </div>
                     <button type="submit">Create Recipe</button>
                 </form>
