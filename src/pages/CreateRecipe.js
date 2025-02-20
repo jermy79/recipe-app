@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../CSS/App.css';
 import '../CSS/CreateRecipe.css';
@@ -8,19 +8,58 @@ const CreateRecipe = () => {
     const [title, setTitle] = useState('');
     const [ingredients, setIngredients] = useState('');
     const [steps, setSteps] = useState('');
-    const [pictures, setPictures] = useState('');
-    const history = useNavigate();
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
+    const [userId, setUserId] = useState(null); // User ID from the logged-in user
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const token = localStorage.getItem('authToken');
+            
+            console.log('Token:', token);  // Log token to check if it's correctly set
+
+            if (!token) {
+                navigate('/login');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:4000/api/user', {
+                    headers: {
+                        'Authorization': token  // Ensure "Bearer" is included
+                    }
+                });
+
+                const data = await response.json();
+                console.log('User data:', data);  // Log response data
+
+                if (response.ok) {
+                    setUserId(data.id); // Set userId from the fetched data
+                } else {
+                    setError(data.message || 'Failed to fetch user data');
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                setError('An error occurred while fetching user data');
+            }
+        };
+
+        fetchUserData();
+    }, [navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Send the recipe data to the backend
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+
         const recipeData = {
             title,
             ingredients,
             steps,
-            pictures, // Pictures can be a comma-separated string
-            user_id: 1, // Hardcoded for John Doe (user_id = 1)
         };
 
         try {
@@ -28,19 +67,21 @@ const CreateRecipe = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': token, // Add the token to the Authorization header
                 },
                 body: JSON.stringify(recipeData),
             });
 
             if (response.ok) {
                 const newRecipe = await response.json();
-                // Redirect to the new recipe page after creation
-                history(`/recipe/${newRecipe.id}`);
+                navigate(`/recipe/${newRecipe.id}`);
             } else {
-                alert('Error adding recipe');
+                const errorData = await response.json();
+                setError(errorData.message || 'Error adding recipe');
             }
         } catch (error) {
             console.error('Error creating recipe:', error);
+            setError('An error occurred while creating the recipe');
         }
     };
 
@@ -49,6 +90,7 @@ const CreateRecipe = () => {
             <Navbar />
             <div className="createRecipeForm">
                 <h1>Create New Recipe</h1>
+                {error && <p className="error">{error}</p>} {/* Display error if any */}
                 <form onSubmit={handleSubmit}>
                     <div>
                         <label>Recipe Title:</label>
@@ -76,8 +118,6 @@ const CreateRecipe = () => {
                             required
                             rows="4"
                         />
-                    </div>
-                    <div>
                     </div>
                     <button type="submit">Create Recipe</button>
                 </form>

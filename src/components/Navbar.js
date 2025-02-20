@@ -5,9 +5,17 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Check if the user is logged in on component mount
+  useEffect(() => {
+    const authToken = localStorage.getItem('authToken');
+    setIsLoggedIn(!!authToken); // Set isLoggedIn to true if authToken exists
+  }, []);
+
+  // Handle window resize for mobile detection
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -24,6 +32,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
+    setIsLoggedIn(false); // Update login state
     navigate('/login');
   };
 
@@ -31,29 +40,25 @@ const Navbar = () => {
     navigate('/home');
   };
 
-  // Page-based navbar rules
-  const isCreatePage = location.pathname === '/create';
-  const isRecipePage = location.pathname.startsWith('/recipe/');
+  // Check if current path is /home
+  const isHomePage = location.pathname === '/home';
 
   return (
     <>
       {/* Desktop Navigation */}
       <div className={`navbar ${isMobile ? 'hidden' : ''}`}>
-        <h1 onClick={handleLogoClick} className="logo">RecipeApp</h1> {/* Logo always visible */}
+        <h1 onClick={handleLogoClick} className="logo">RecipeApp</h1>
         <ul>
-          {isCreatePage ? (
-            <li><button onClick={handleLogout}>Log Out</button></li> // Only Log Out
-          ) : isRecipePage ? (
-            <>
-              <li><Link to="/create">Create Recipe</Link></li> {/* Show Create Recipe */}
-              <li><button onClick={handleLogout}>Log Out</button></li>
-            </>
-          ) : (
-            <>
-              <li><Link to="/create">Create Recipe</Link></li>
-              <li><button onClick={handleLogout}>Log Out</button></li>
-            </>
+          {isHomePage && (
+            <li><Link to="/create">Create Recipe</Link></li>
           )}
+          <li>
+            {isLoggedIn ? (
+              <button onClick={handleLogout}>Log Out</button>
+            ) : (
+              <Link to="/login">Log In</Link>
+            )}
+          </li>
         </ul>
       </div>
 
@@ -78,20 +83,17 @@ const Navbar = () => {
           ×
         </button>
         <ul>
-          <li><h1 onClick={handleLogoClick} className="logo">RecipeApp</h1></li> {/* Logo in mobile menu */}
-          {isCreatePage ? (
-            <li><button onClick={() => { handleLogout(); toggleMenu(); }}>Log Out</button></li>
-          ) : isRecipePage ? (
-            <>
-              <li><Link to="/create" onClick={toggleMenu}>Create Recipe</Link></li>
-              <li><button onClick={() => { handleLogout(); toggleMenu(); }}>Log Out</button></li>
-            </>
-          ) : (
-            <>
-              <li><Link to="/create" onClick={toggleMenu}>Create Recipe</Link></li>
-              <li><button onClick={() => { handleLogout(); toggleMenu(); }}>Log Out</button></li>
-            </>
+          <li><h1 onClick={handleLogoClick} className="logo">RecipeApp</h1></li>
+          {isHomePage && (
+            <li><Link to="/create" onClick={toggleMenu}>Create Recipe</Link></li>
           )}
+          <li>
+            {isLoggedIn ? (
+              <button onClick={() => { handleLogout(); toggleMenu(); }}>Log Out</button>
+            ) : (
+              <Link to="/login" onClick={toggleMenu}>Log In</Link>
+            )}
+          </li>
         </ul>
       </div>
     </>
