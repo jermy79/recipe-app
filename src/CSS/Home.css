@@ -36,6 +36,18 @@
   position: relative; /* Allows absolute positioning for buttons */
 }
 
+.recipeCard p {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;  /* Limit to 3 lines of text */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;  /* Add ellipsis if the text is too long */
+  white-space: normal;
+  font-size: 0.95rem;
+  margin-top: 10px;
+}
+
+
 .recipeCard:hover {
   transform: scale(1.05);
 }
