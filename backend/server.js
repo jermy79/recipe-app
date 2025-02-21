@@ -147,6 +147,53 @@ app.post('/api/recipes', verifyToken, async (req, res) => {
   }
 });
 
+// API Route to update a recipe
+app.put('/api/recipes/:id', verifyToken, async (req, res) => {
+  const { id } = req.params;
+  const { title, ingredients, steps } = req.body;
+  const userId = req.userId; // Ensure only the owner can edit
+
+  try {
+      const [result] = await db.execute(
+          'UPDATE recipes SET title = ?, ingredients = ?, steps = ? WHERE id = ? AND user_id = ?',
+          [title, ingredients, steps, id, userId]
+      );
+
+      if (result.affectedRows === 0) {
+          return res.status(404).json({ message: 'Recipe not found or unauthorized' });
+      }
+
+      res.status(200).json({ message: 'Recipe updated successfully' });
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Error updating recipe' });
+  }
+});
+
+
+// API Route to delete a recipe
+app.delete('/api/recipes/:id', verifyToken, async (req, res) => {
+  const { id } = req.params;
+  const userId = req.userId;
+
+  try {
+    const [result] = await db.execute(
+      'DELETE FROM recipes WHERE id = ? AND user_id = ?',
+      [id, userId]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Recipe not found or unauthorized' });
+    }
+
+    res.status(200).json({ message: 'Recipe deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error deleting recipe' });
+  }
+});
+
+
 // Start Server
 app.listen(PORT, () => {
   console.log(`Backend running on http://localhost:${PORT}`);

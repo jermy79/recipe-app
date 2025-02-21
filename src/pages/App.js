@@ -6,6 +6,7 @@ import Home from './Home'
 import Login from './Login'
 import RecipeDetail from './RecipeDetail';
 import CreateRecipe from './CreateRecipe';
+import EditRecipe from './EditRecipe';
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/recipe/:id" element={<RecipeDetail />} />
         <Route path="/create" element={<CreateRecipe />} />
+        <Route path="/edit-recipe/:id" element={<EditRecipe />} />
     </Routes>
 </Router>
   );
