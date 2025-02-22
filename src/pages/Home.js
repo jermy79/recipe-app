@@ -8,6 +8,7 @@ const Home = () => {
     const [recipes, setRecipes] = useState([]);
     const [userName, setUserName] = useState('');
     const [selectedRecipe, setSelectedRecipe] = useState(null);
+    const [touchStartTime, setTouchStartTime] = useState(0);  // Track touch start time
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -19,7 +20,7 @@ const Home = () => {
             }
 
             try {
-                const response = await fetch('http://localhost:4000/api/user', {
+                const response = await fetch('https://api.rezepe.com/api/user', {
                     headers: { 'Authorization': token }
                 });
                 const data = await response.json();
@@ -37,7 +38,7 @@ const Home = () => {
             }
 
             try {
-                const response = await fetch('http://localhost:4000/api/recipes', {
+                const response = await fetch('https://api.rezepe.com/api/recipes', {
                     headers: { 'Authorization': token }
                 });
 
@@ -62,10 +63,24 @@ const Home = () => {
         return () => document.removeEventListener('click', handleClickOutside);
     }, [navigate]);
 
-    // Toggle right-click menu (replaces ingredients with buttons)
+    // Handle right-click or long press context menu
     const handleContextMenu = (e, recipe) => {
         e.preventDefault();
         setSelectedRecipe((prev) => (prev?.id === recipe.id ? null : recipe));
+    };
+
+    // Handle touch start for mobile long press
+    const handleTouchStart = (e, recipe) => {
+        setTouchStartTime(Date.now()); // Record touch start time
+    };
+
+    // Handle touch end for mobile long press
+    const handleTouchEnd = (e, recipe) => {
+        const touchDuration = Date.now() - touchStartTime;
+        if (touchDuration > 500) {  // 500ms for long press
+            e.preventDefault();
+            setSelectedRecipe((prev) => (prev?.id === recipe.id ? null : recipe));
+        }
     };
 
     // Handle edit navigation
@@ -85,7 +100,7 @@ const Home = () => {
 
         if (confirmDelete) {
             try {
-                const response = await fetch(`http://localhost:4000/api/recipes/${id}`, {
+                const response = await fetch(`https://api.rezepe.com/api/recipes/${id}`, {
                     method: 'DELETE',
                     headers: { 'Authorization': token }
                 });
@@ -115,11 +130,13 @@ const Home = () => {
                             key={recipe.id}
                             className="recipeCard"
                             onClick={() => navigate(`/recipe/${recipe.id}`)}
-                            onContextMenu={(e) => handleContextMenu(e, recipe)}
+                            onContextMenu={(e) => handleContextMenu(e, recipe)}  // Right-click for desktop
+                            onTouchStart={(e) => handleTouchStart(e, recipe)}   // Mobile touch start
+                            onTouchEnd={(e) => handleTouchEnd(e, recipe)}       // Mobile touch end
                         >
                             <h3>{recipe.title}</h3>
 
-                            {/* Show buttons if recipe is right-clicked, otherwise show ingredients */}
+                            {/* Show buttons if recipe is selected, otherwise show ingredients */}
                             {selectedRecipe?.id === recipe.id ? (
                                 <div className="recipeActions">
                                     <button onClick={(e) => handleEdit(e, recipe.id)}>Edit</button>

@@ -1,20 +1,101 @@
+/* General container styling */
 .container {
     display: flex;
-    align-items: center; /* Centers items vertically */
-    justify-content: flex-start;
-    margin:100px
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+    gap: 20px;
 }
 
-.pic {
-    margin-right: 100px; /* Space between image and text */
-}
-
+/* Image styling */
 .pic img {
-    width: 600px; /* Set the size of the image */
-    border-radius: 50%; /* Makes the image a circle */
-    object-fit: cover; /* Ensures the image scales nicely */
+    width: 100%;
+    max-width: 500px;  /* Increased image size */
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
 }
 
+/* Welcome text */
 .welcomeText {
-    max-width: 700px; /* Optional: limit the width of the text */
+    max-width: 700px;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* Headings */
+.welcomeText h1 {
+    font-size: 2.5rem;  /* Increased heading size */
+    margin-bottom: 10px;
+}
+
+/* Button container */
+.button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 400px;
+    align-items: center;  /* Ensure buttons are centered */
+    justify-content: center; /* Vertically center the buttons */
+    margin-top: 20px;  /* Add some space between text and buttons */
+    margin-left: auto;  /* Center the container horizontally */
+    margin-right: auto; /* Center the container horizontally */
+}
+
+/* Button styling */
+.btn {
+    padding: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    background-color: #4caf50;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    max-width: 300px;  /* Set max-width to keep buttons centered and not stretched */
+}
+
+.btn:hover {
+    background-color: #45a049;
+}
+
+/* Larger screens adjustments */
+@media (min-width: 768px) {
+    .container {
+        flex-direction: row;
+        text-align: left;
+        justify-content: center;  /* Center content on larger screens */
+        padding: 100px;
+    }
+
+    .pic {
+        margin-right: 50px;
+        /* Center the image and add some space between the image and text */
+    }
+
+    .welcomeText {
+        text-align: left;  /* Left-align the text for larger screens */
+    }
+
+    .button-container {
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;  /* Ensure buttons stay centered */
+        gap: 20px;  /* Add space between buttons */
+        max-width: 600px;  /* Ensure the buttons don't stretch too much */
+        width: 100%;  /* Full width */
+        margin-left: auto;  /* Center the container horizontally */
+        margin-right: auto; /* Center the container horizontally */
+    }
+
+    .btn {
+        max-width: 200px;  /* Set max-width for the buttons */
+        width: auto;  /* Allow button to resize as needed */
+    }
 }

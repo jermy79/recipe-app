@@ -19,6 +19,10 @@
     margin-top: 20px;
     padding: 20px;
   }
+
+.recipeCard {
+    user-select: none;  /* Prevent text selection */
+}
   
 /* Recipe card styles */
 .recipeCard {

@@ -1,8 +1,9 @@
-/* App.css */
+/* Desktop layout */
 .login-container {
   display: flex;
   height: 100vh;
   width: 100%;
+  overflow: hidden;
 }
 
 .picture {
@@ -43,7 +44,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  box-sizing: border-box; /* Ensure padding doesn't affect width */
+  box-sizing: border-box;
 }
 
 .login-card input {
@@ -52,7 +53,7 @@
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  box-sizing: border-box; /* Ensure padding is included in the width calculation */
+  box-sizing: border-box;
 }
 
 .login-card button {
@@ -89,4 +90,48 @@
 
 .toggle-links .link:hover {
   color: #0056b3;
+}
+
+/* Mobile layout */
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: url('../media/foodLogin.webp') no-repeat center center/cover;
+    min-height: 100vh;
+    padding: 0px;
+    overflow-y: auto; /* Allow vertical scrolling */
+  }
+
+  .picture {
+    display: none; /* Hide side-by-side image */
+  }
+
+  .login-card {
+    width: 80%;
+    max-width: 350px; /* Make the card a bit smaller */
+    background-color: rgba(255, 255, 255, 0.9); /* Slight transparency */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-height: 80vh; /* Ensure the card doesn't overflow vertically */
+    overflow-y: auto; /* Scroll if content overflows */
+  }
+
+  .login-card h1 {
+    font-size: 1.8rem;
+  }
+
+  .login-card input,
+  .login-card button {
+    padding: 12px;
+    font-size: 1rem;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Allow vertical scrolling but prevent horizontal scroll */
+  }
 }

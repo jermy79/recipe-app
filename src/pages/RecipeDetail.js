@@ -32,7 +32,7 @@ const RecipeDetail = () => {
                 return;
             }
             try {
-                const response = await fetch(`http://localhost:4000/api/recipes/${id}`, {
+                const response = await fetch(`https://api.rezepe.com/api/recipes/${id}`, {
                     headers: {
                         'Authorization': token
                     }

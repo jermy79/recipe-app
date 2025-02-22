@@ -16,7 +16,7 @@ const EditRecipe = () => {
             const token = localStorage.getItem('authToken');
 
             try {
-                const response = await fetch(`http://localhost:4000/api/recipes/${id}`, {
+                const response = await fetch(`https://api.rezepe.com/api/recipes/${id}`, {
                     headers: { 'Authorization': token }
                 });
 
@@ -45,7 +45,7 @@ const EditRecipe = () => {
         const token = localStorage.getItem('authToken');
 
         try {
-            const response = await fetch(`http://localhost:4000/api/recipes/${id}`, {
+            const response = await fetch(`https://api.rezepe.com/api/recipes/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': token,

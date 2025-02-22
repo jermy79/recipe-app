@@ -22,7 +22,7 @@ const CreateRecipe = () => {
             }
 
             try {
-                const response = await fetch('http://localhost:4000/api/user', {
+                const response = await fetch('https://api.rezepe.com/api/user', {
                     headers: {
                         'Authorization': token
                     }
@@ -45,21 +45,21 @@ const CreateRecipe = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         const token = localStorage.getItem('authToken');
         if (!token) {
             navigate('/login');
             return;
         }
-
+    
         const recipeData = {
             title,
             ingredients,
             steps,
         };
-
+    
         try {
-            const response = await fetch('http://localhost:4000/api/recipes', {
+            const response = await fetch('https://api.rezepe.com/api/recipes', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -67,10 +67,11 @@ const CreateRecipe = () => {
                 },
                 body: JSON.stringify(recipeData),
             });
-
+    
             if (response.ok) {
                 const newRecipe = await response.json();
-                navigate(`/recipe/${newRecipe.id}`);
+                // Use navigate with the { replace: true } option to prevent going back to this page
+                navigate(`/recipe/${newRecipe.id}`, { replace: true });
             } else {
                 const errorData = await response.json();
                 setError(errorData.message || 'Error adding recipe');

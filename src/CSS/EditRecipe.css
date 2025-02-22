@@ -77,23 +77,25 @@
 .createRecipeForm h1 {
     text-align: center;
 }
-
 /* Responsive design for smaller screens */
 @media (max-width: 768px) {
     .createRecipeForm {
-        padding: 15px;
+      padding: 15px;
+      width: 100%; /* Ensure the form takes up the full screen width */
+      max-width: none; /* Remove the max-width so it fits on smaller screens */
     }
-
+  
     .createRecipeForm h1 {
-        font-size: 2rem;
+      font-size: 2rem;
     }
-
+  
     .createRecipeForm input,
     .createRecipeForm textarea {
-        font-size: 0.95rem;
+      font-size: 0.95rem;
     }
-
+  
     .createRecipeForm button {
-        font-size: 1rem;
+      font-size: 1rem;
     }
-}
+  }
+  
