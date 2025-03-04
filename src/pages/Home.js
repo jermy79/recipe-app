@@ -124,33 +124,40 @@ const Home = () => {
                 <h1>{userName ? `${userName}'s Recipes` : 'Recipes'}</h1>
             </div>
             <div className="recipeList">
-                {recipes.length > 0 ? (
-                    recipes.map((recipe) => (
-                        <div
-                            key={recipe.id}
-                            className="recipeCard"
-                            onClick={() => navigate(`/recipe/${recipe.id}`)}
-                            onContextMenu={(e) => handleContextMenu(e, recipe)}  // Right-click for desktop
-                            onTouchStart={(e) => handleTouchStart(e, recipe)}   // Mobile touch start
-                            onTouchEnd={(e) => handleTouchEnd(e, recipe)}       // Mobile touch end
-                        >
-                            <h3>{recipe.title}</h3>
-
-                            {/* Show buttons if recipe is selected, otherwise show ingredients */}
-                            {selectedRecipe?.id === recipe.id ? (
-                                <div className="recipeActions">
-                                    <button onClick={(e) => handleEdit(e, recipe.id)}>Edit</button>
-                                    <button className="deleteBtn" onClick={(e) => handleDelete(e, recipe.id)}>Delete</button>
-                                </div>
+            {recipes.length > 0 ? (
+                recipes.map((recipe) => (
+                    <div
+                        key={recipe.id}
+                        className="recipeCard"
+                        onClick={() => navigate(`/recipe/${recipe.id}`)}
+                        onContextMenu={(e) => handleContextMenu(e, recipe)}
+                        onTouchStart={(e) => handleTouchStart(e, recipe)}
+                        onTouchEnd={(e) => handleTouchEnd(e, recipe)}
+                    >
+                        <div className="recipeImage">
+                            {recipe.pictures ? (
+                                <img src={`https://api.rezepe.com${recipe.pictures}`} alt={recipe.title} />
                             ) : (
-                                <p>{recipe.ingredients}</p>
+                                <div className="placeholderImage">No Image</div>
                             )}
                         </div>
-                    ))
-                ) : (
-                    <p>No recipes found</p>
+
+                        <h3>{recipe.title}</h3>
+
+                        {selectedRecipe?.id === recipe.id && (
+                            <div className="recipeActions">
+                                <button onClick={(e) => handleEdit(e, recipe.id)}>Edit</button>
+                                <button className="deleteBtn" onClick={(e) => handleDelete(e, recipe.id)}>Delete</button>
+                            </div>
+                        )}
+                    </div>
+                ))
+            ) : (
+                 <p>No recipes found</p>
                 )}
-            </div>
+
+</div>
+
         </div>
     );
 };

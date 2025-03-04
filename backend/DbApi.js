@@ -8,6 +8,30 @@ const db = require('./db'); // Import the database pool
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+const path = require('path');
+const multer = require('multer');
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Save images to the /uploads folder
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `${Date.now()}-${file.fieldname}${ext}`); // Unique filename
+  }
+});
+
+const upload = multer({ storage });
+
+// Ensure uploads folder exists
+const fs = require('fs');
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
+
+
 // Middleware
 app.use(express.json());
 app.use(cors({
@@ -130,47 +154,81 @@ app.get('/api/user', verifyToken, async (req, res) => {
   }
 });
 
-// API Route to create a new recipe for the logged-in user
-app.post('/api/recipes', verifyToken, async (req, res) => {
+// Create a recipe with optional image upload
+app.post('/api/recipes', verifyToken, upload.single('image'), async (req, res) => {
   const { title, ingredients, steps } = req.body;
-  const userId = req.userId;  // Get the user ID from the verified JWT token
+  const userId = req.userId; // From JWT
+  const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
 
   try {
-    // Insert new recipe into the database
+    // Insert the new recipe, including the image path
     const [result] = await db.execute(
-      'INSERT INTO recipes (title, ingredients, steps, user_id) VALUES (?, ?, ?, ?)', 
-      [title, ingredients, steps, userId]
+      'INSERT INTO recipes (title, ingredients, steps, user_id, pictures) VALUES (?, ?, ?, ?, ?)', 
+      [title, ingredients, steps, userId, imagePath]
     );
 
-    res.status(201).json({ id: result.insertId });
+    const recipeId = result.insertId;
+
+    res.status(201).json({ id: recipeId, message: 'Recipe created successfully', imagePath });
   } catch (err) {
-    console.error(err);
+    console.error('Error creating recipe:', err);
     res.status(500).json({ message: 'Error creating recipe' });
   }
 });
 
-// API Route to update a recipe
-app.put('/api/recipes/:id', verifyToken, async (req, res) => {
+
+
+// API Route to update a recipe, including optional image upload
+app.put('/api/recipes/:id', verifyToken, upload.single('image'), async (req, res) => {
   const { id } = req.params;
   const { title, ingredients, steps } = req.body;
   const userId = req.userId; // Ensure only the owner can edit
+  const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
 
   try {
-      const [result] = await db.execute(
-          'UPDATE recipes SET title = ?, ingredients = ?, steps = ? WHERE id = ? AND user_id = ?',
-          [title, ingredients, steps, id, userId]
-      );
+    // Get the current recipe data from the database
+    const [currentRecipe] = await db.execute('SELECT pictures FROM recipes WHERE id = ? AND user_id = ?', [id, userId]);
+    
+    if (currentRecipe.length === 0) {
+      return res.status(404).json({ message: 'Recipe not found or unauthorized' });
+    }
 
-      if (result.affectedRows === 0) {
-          return res.status(404).json({ message: 'Recipe not found or unauthorized' });
+    // If a new image is uploaded, delete the old image from the filesystem
+    if (imagePath && currentRecipe[0].pictures) {
+      const oldImagePath = path.join(__dirname, currentRecipe[0].pictures);
+      
+      // Check if the old image file exists and delete it
+      if (fs.existsSync(oldImagePath)) {
+        fs.unlinkSync(oldImagePath);
       }
+    }
 
-      res.status(200).json({ message: 'Recipe updated successfully' });
+    // Update the recipe in the database
+    let query = 'UPDATE recipes SET title = ?, ingredients = ?, steps = ?';
+    let params = [title, ingredients, steps];
+
+    if (imagePath) {
+      query += ', pictures = ?'; // Update the picture column if a new image is uploaded
+      params.push(imagePath);
+    }
+
+    query += ' WHERE id = ? AND user_id = ?';
+    params.push(id, userId);
+
+    const [result] = await db.execute(query, params);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Recipe not found or unauthorized' });
+    }
+
+    res.status(200).json({ message: 'Recipe updated successfully', imagePath });
   } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: 'Error updating recipe' });
+    console.error('Error updating recipe:', err);
+    res.status(500).json({ message: 'Error updating recipe' });
   }
 });
+
+
 
 
 // API Route to delete a recipe
@@ -179,22 +237,45 @@ app.delete('/api/recipes/:id', verifyToken, async (req, res) => {
   const userId = req.userId;
 
   try {
-    const [result] = await db.execute(
-      'DELETE FROM recipes WHERE id = ? AND user_id = ?',
-      [id, userId]
-    );
+    // Get the recipe to check if it has an associated image
+    const [recipe] = await db.execute('SELECT pictures FROM recipes WHERE id = ? AND user_id = ?', [id, userId]);
+
+    if (recipe.length === 0) {
+      return res.status(404).json({ message: 'Recipe not found or unauthorized' });
+    }
+
+    // If there's an image, delete it from the filesystem
+    if (recipe[0].pictures) {
+      const imagePath = path.join(__dirname, 'uploads', recipe[0].pictures.split('/')[2]);
+      
+      fs.unlink(imagePath, (err) => {
+        if (err) {
+          console.error('Error deleting image:', err);
+          // Optionally continue to delete the recipe even if the image can't be deleted
+        }
+      });
+    }
+
+    // Now, delete the recipe from the database
+    const [result] = await db.execute('DELETE FROM recipes WHERE id = ? AND user_id = ?', [id, userId]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'Recipe not found or unauthorized' });
     }
 
-    res.status(200).json({ message: 'Recipe deleted successfully' });
+    res.status(200).json({ message: 'Recipe and image deleted successfully' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error deleting recipe' });
   }
 });
 
+
+
+// Serve static files (images, etc.) from the 'uploads' directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  maxAge: '1d'  // Cache images for 1 day
+}));
 
 // Start Server
 app.listen(PORT, () => {

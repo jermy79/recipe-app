@@ -57,9 +57,20 @@ const RecipeDetail = () => {
         <div>
             <Navbar />
             <div className="recipeDetail">
+
+
+                {/* Display the recipe image if it exists */}
+                {recipe.pictures && (
+                    <div className="recipeImage">
+                        <img src={`https://api.rezepe.com${recipe.pictures}`} alt={recipe.title} />
+                    </div>
+                )}
+
                 <h1>{recipe.title || 'No Title'}</h1>
+
                 <h3>Ingredients:</h3>
                 <div>{recipe.ingredients ? newlineToBreak(recipe.ingredients) : 'No ingredients available'}</div>
+
                 <h3>Steps:</h3>
                 <div>{recipe.steps ? newlineToBreak(recipe.steps) : 'No steps available'}</div>
             </div>
