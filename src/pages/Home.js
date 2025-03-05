@@ -6,9 +6,11 @@ import '../CSS/Home.css';
 
 const Home = () => {
     const [recipes, setRecipes] = useState([]);
+    const [filteredRecipes, setFilteredRecipes] = useState([]);
     const [userName, setUserName] = useState('');
     const [selectedRecipe, setSelectedRecipe] = useState(null);
-    const [touchStartTime, setTouchStartTime] = useState(0);  // Track touch start time
+    const [touchStartTime, setTouchStartTime] = useState(0);
+    const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -43,7 +45,10 @@ const Home = () => {
                 });
 
                 const data = await response.json();
-                if (response.ok) setRecipes(data);
+                if (response.ok) {
+                    setRecipes(data);
+                    setFilteredRecipes(data);
+                }
             } catch (error) {
                 console.error('Error fetching recipes:', error);
             }
@@ -62,6 +67,18 @@ const Home = () => {
         document.addEventListener('click', handleClickOutside);
         return () => document.removeEventListener('click', handleClickOutside);
     }, [navigate]);
+
+    // Handle search query changes
+    const handleSearchChange = (query) => {
+        setSearchQuery(query);
+        
+        // Filter recipes based on search query
+        const filtered = recipes.filter(recipe => 
+            recipe.title.toLowerCase().includes(query.toLowerCase())
+        );
+        
+        setFilteredRecipes(filtered);
+    };
 
     // Handle right-click or long press context menu
     const handleContextMenu = (e, recipe) => {
@@ -106,7 +123,9 @@ const Home = () => {
                 });
 
                 if (response.ok) {
-                    setRecipes(recipes.filter(recipe => recipe.id !== id));
+                    const updatedRecipes = recipes.filter(recipe => recipe.id !== id);
+                    setRecipes(updatedRecipes);
+                    setFilteredRecipes(updatedRecipes);
                     setSelectedRecipe(null);
                 } else {
                     console.error('Failed to delete recipe');
@@ -119,16 +138,15 @@ const Home = () => {
 
     return (
         <div>
-            <Navbar />
+            <Navbar onSearchChange={handleSearchChange} />
             <div className="welcomeText">
                 <h1>{userName ? `${userName}'s Recipes` : 'Recipes'}</h1>
             </div>
             <div className="recipeList">
-            {recipes.length > 0 ? (
-                recipes.map((recipe) => (
-                    <div className='card'>
+            {filteredRecipes.length > 0 ? (
+                filteredRecipes.map((recipe) => (
+                    <div key={recipe.id} className='card'>
                         <div
-                            key={recipe.id}
                             className={`recipeCard ${selectedRecipe?.id === recipe.id ? 'blurred' : ''}`}
                             onClick={() => navigate(`/recipe/${recipe.id}`)}
                             onContextMenu={(e) => handleContextMenu(e, recipe)}
@@ -156,9 +174,7 @@ const Home = () => {
             ) : (
                  <p>No recipes found</p>
                 )}
-
-</div>
-
+            </div>
         </div>
     );
 };

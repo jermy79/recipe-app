@@ -1,26 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import '../CSS/Navbar.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import logo from '../media/RezepeLogo.png';  // Import the logo image
+import logo from '../media/RezepeLogo.png';
 
-const Navbar = () => {
+const Navbar = ({ onSearchChange }) => {
   const [isMobile, setIsMobile] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Check if the user is logged in on component mount
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
-    setIsLoggedIn(!!authToken); // Set isLoggedIn to true if authToken exists
+    setIsLoggedIn(!!authToken);
   }, []);
 
-  // Handle window resize for mobile detection
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
     };
-
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -28,7 +27,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
-    setIsLoggedIn(false); // Update login state
+    setIsLoggedIn(false);
     navigate('/login');
   };
 
@@ -36,39 +35,69 @@ const Navbar = () => {
     navigate('/home');
   };
 
-  // Check if current path is /home
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?query=${searchQuery}`);
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    // Pass search query up to parent component
+    onSearchChange(query);
+  };
+
+  const toggleSearch = () => {
+    setIsSearchOpen(!isSearchOpen);
+  };
+
   const isHomePage = location.pathname === '/home';
-  const isRootPage = location.pathname === '/'; // Check if the current path is root page
+  const isRootPage = location.pathname === '/';
 
   return (
-    <>
-      {/* Desktop and Mobile Navigation */}
-      <div className="navbar">
-        <img
-          src={logo}  // Use the imported image
-          alt="ReZePe Logo"
-          onClick={handleLogoClick}
-          className="logo"  // Apply the logo class for styling
-        />
-        <ul>
-          {/* Show "Create Recipe" link only on desktop */}
-          {isHomePage && !isMobile && (
-            <li><Link to="/create">Create Recipe</Link></li>
-          )}
-          {/* Show plus icon only on mobile and not on the root page */}
-          {isMobile && !isRootPage && (
-            <li><Link to="/create"><span className="plus-icon">+</span></Link></li>
-          )}
-          <li>
-            {isLoggedIn ? (
-              <button onClick={handleLogout}>Log Out</button>
-            ) : (
-              <Link to="/login">Log In</Link>
-            )}
+    <div className="navbar">
+      <img
+        src={logo}
+        alt="ReZePe Logo"
+        onClick={handleLogoClick}
+        className="logo"
+      />
+      <ul>
+        {isHomePage && !isMobile && (
+          <li><Link to="/create">Create Recipe</Link></li>
+        )}
+        {isMobile && !isRootPage && (
+          <li><Link to="/create"><span className="plus-icon">+</span></Link></li>
+        )}
+        {isHomePage && (
+          <li className="searchBar">
+            <form onSubmit={handleSearch} className={isSearchOpen ? "searchForm open" : "searchForm"}>
+              {isSearchOpen && (
+                <input
+                  type="text"
+                  placeholder="Search recipes..."
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  autoFocus
+                />
+              )}
+              <button type="button" onClick={toggleSearch}>
+                {isSearchOpen ? "✖" : "🔍"}
+              </button>
+            </form>
           </li>
-        </ul>
-      </div>
-    </>
+        )}
+        <li>
+          {isLoggedIn ? (
+            <button onClick={handleLogout}>Log Out</button>
+          ) : (
+            <Link to="/login">Log In</Link>
+          )}
+        </li>
+      </ul>
+    </div>
   );
 };
 
