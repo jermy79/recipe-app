@@ -91,7 +91,8 @@
 
 .recipeCard.blurred {
   filter: blur(5px); /* Apply the blur effect */
-  pointer-events: none; /* Disable interactions with the card while blurred */
+  pointer-events: none; /* Prevent interactions with the blurred card */
+  transform: scale(1.05);
 }
 
 /* Recipe Actions container */
@@ -131,4 +132,8 @@
 
 .deleteBtn:hover {
   background: #cc0000 !important;
+}
+
+.card {
+  position: relative; /* Ensure the parent has positioning for absolute children */
 }

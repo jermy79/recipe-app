@@ -121,7 +121,7 @@ const CreateRecipe = () => {
                             rows="4"
                         />
                     </div>
-                    <div>
+                    <div className='imgButton'>
                         <label>Upload Image:</label>
                         <input
                             type="file"

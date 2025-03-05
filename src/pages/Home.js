@@ -126,30 +126,31 @@ const Home = () => {
             <div className="recipeList">
             {recipes.length > 0 ? (
                 recipes.map((recipe) => (
-                    <div
-                        key={recipe.id}
-                        className="recipeCard"
-                        onClick={() => navigate(`/recipe/${recipe.id}`)}
-                        onContextMenu={(e) => handleContextMenu(e, recipe)}
-                        onTouchStart={(e) => handleTouchStart(e, recipe)}
-                        onTouchEnd={(e) => handleTouchEnd(e, recipe)}
-                    >
-                        <div className="recipeImage">
-                            {recipe.pictures ? (
-                                <img src={`https://api.rezepe.com${recipe.pictures}`} alt={recipe.title} />
-                            ) : (
-                                <div className="placeholderImage">No Image</div>
-                            )}
-                        </div>
-
-                        <h3>{recipe.title}</h3>
-
-                        {selectedRecipe?.id === recipe.id && (
-                            <div className="recipeActions">
-                                <button onClick={(e) => handleEdit(e, recipe.id)}>Edit</button>
-                                <button className="deleteBtn" onClick={(e) => handleDelete(e, recipe.id)}>Delete</button>
+                    <div className='card'>
+                        <div
+                            key={recipe.id}
+                            className={`recipeCard ${selectedRecipe?.id === recipe.id ? 'blurred' : ''}`}
+                            onClick={() => navigate(`/recipe/${recipe.id}`)}
+                            onContextMenu={(e) => handleContextMenu(e, recipe)}
+                            onTouchStart={(e) => handleTouchStart(e, recipe)}
+                            onTouchEnd={(e) => handleTouchEnd(e, recipe)}
+                        >
+                            <div className="recipeImage">
+                                {recipe.pictures ? (
+                                    <img src={`https://api.rezepe.com${recipe.pictures}`} alt={recipe.title} />
+                                ) : (
+                                    <div className="placeholderImage">No Image</div>
+                                )}
                             </div>
-                        )}
+
+                            <h3>{recipe.title}</h3>
+                        </div>
+                        {selectedRecipe?.id === recipe.id && (
+                                <div className="recipeActions">
+                                    <button onClick={(e) => handleEdit(e, recipe.id)}>Edit</button>
+                                    <button className="deleteBtn" onClick={(e) => handleDelete(e, recipe.id)}>Delete</button>
+                                </div>
+                            )}
                     </div>
                 ))
             ) : (
