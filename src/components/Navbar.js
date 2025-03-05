@@ -37,15 +37,11 @@ const Navbar = ({ onSearchChange }) => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search?query=${searchQuery}`);
-    }
   };
 
   const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
-    // Pass search query up to parent component
     onSearchChange(query);
   };
 
@@ -58,45 +54,61 @@ const Navbar = ({ onSearchChange }) => {
 
   return (
     <div className="navbar">
-      <img
-        src={logo}
-        alt="ReZePe Logo"
-        onClick={handleLogoClick}
-        className="logo"
-      />
-      <ul>
-        {isHomePage && !isMobile && (
-          <li><Link to="/create">Create Recipe</Link></li>
-        )}
-        {isMobile && !isRootPage && (
-          <li><Link to="/create"><span className="plus-icon">+</span></Link></li>
-        )}
-        {isHomePage && (
-          <li className="searchBar">
-            <form onSubmit={handleSearch} className={isSearchOpen ? "searchForm open" : "searchForm"}>
-              {isSearchOpen && (
-                <input
-                  type="text"
-                  placeholder="Search recipes..."
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  autoFocus
-                />
+      <div className="MainBar">
+        <img
+          src={logo}
+          alt="ReZePe Logo"
+          onClick={handleLogoClick}
+          className="logo"
+        />
+        <div className="minbar">
+          <ul>
+            {isHomePage && !isMobile && (
+              <li>
+                <button onClick={() => navigate('/create')}>Create Recipe</button>
+              </li>
+            )}
+            {isHomePage && isMobile && (
+              <li><Link to="/create"><span className="plus-icon">+</span></Link></li>
+            )}
+            {isHomePage && (
+              <li className="searchBar">
+                <form onSubmit={handleSearch} className={isSearchOpen ? "searchForm open" : "searchForm"}>
+                  {isSearchOpen && !isMobile && (
+                    <input
+                      type="text"
+                      placeholder="Search recipes..."
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                      autoFocus
+                    />
+                  )}
+                  <button type="button" onClick={toggleSearch}>
+                    {isSearchOpen ? "✖" : "Search"}
+                  </button>
+                </form>
+              </li>
+            )}
+            <li>
+              {isLoggedIn ? (
+                <button onClick={handleLogout}>Log Out</button>
+              ) : (
+                <Link to="/login">Log In</Link>
               )}
-              <button type="button" onClick={toggleSearch}>
-                {isSearchOpen ? "✖" : "🔍"}
-              </button>
-            </form>
-          </li>
-        )}
-        <li>
-          {isLoggedIn ? (
-            <button onClick={handleLogout}>Log Out</button>
-          ) : (
-            <Link to="/login">Log In</Link>
-          )}
-        </li>
-      </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+      {isSearchOpen && isMobile && (
+        <input
+          className="mobileSearch"
+          type="text"
+          placeholder="Search recipes..."
+          value={searchQuery}
+          onChange={handleSearchChange}
+          autoFocus
+        />
+      )}
     </div>
   );
 };

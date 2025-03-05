@@ -2,10 +2,22 @@
 .navbar {
     background-color: #eb632b;  /* Red background for a fresh, modern look */
     padding: 15px 20px;  /* Add some space inside the navbar */
+    flex-direction: column;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);  /* Add a subtle shadow for depth */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.MainBar {
     display: flex;
     justify-content: space-between;  /* Align logo to the left and menu to the right */
     align-items: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);  /* Add a subtle shadow for depth */
+    width: 100%;
+}
+
+.minbar {
+    display: flex;
+    align-items: center;
 }
 
 .navbar .logo {
@@ -34,6 +46,7 @@
     display: flex;
     gap: 20px;  /* Space between items */
     align-items: center; /* Ensure all navbar items are vertically aligned */
+    flex-wrap: nowrap; /* Prevent wrapping */
 }
 
 .navbar ul li {
@@ -52,6 +65,7 @@
     cursor: pointer;
     display: flex; /* Ensures the content inside is also aligned */
     align-items: center;
+    white-space: nowrap; /* Prevent text wrapping */
 }
 
 /* Hover Effects */
@@ -83,21 +97,21 @@
     display: flex;
     align-items: center;
     gap: 10px;
-  }
+}
   
-  .searchBar form {
+.searchBar form {
     display: flex;
     align-items: center;
-  }
+}
   
-  .searchBar input {
+.searchBar input {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 6px;
     font-size: 1rem;
-  }
+}
   
-  .searchBar button {
+.searchBar button {
     padding: 8px 12px;
     background-color: #007bff;
     color: white;
@@ -106,38 +120,71 @@
     cursor: pointer;
     font-size: 1rem;
     margin-left: 5px;
-  }
+}
   
-  .searchBar button:hover {
+.searchBar button:hover {
     background-color: #0056b3;
-  }
-  
+}
 
+.mobileSearch {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box; /* Ensure padding is included in width calculation */
+}
+  
 /* Responsive Styles */
 @media (max-width: 768px) {
     .logo {
-        width: 150px;  /* Adjust width as needed */
+        width: 130px;  /* Adjusted logo size on mobile */
         height: auto;  /* Maintain aspect ratio */
     }
+    
     .navbar {
-        display: flex;  /* Keep the navbar visible on mobile */
+        padding: 10px;  /* Reduce padding on mobile */
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
     }
-
+    
+    .MainBar {
+        justify-content: space-between;
+        width: 100%;
+    }
+    
+    .minbar {
+        display: flex;
+        justify-content: flex-end; /* Push items to the right */
+    }
+    
     .navbar ul {
-        gap: 15px;  /* Adjust spacing between items for mobile */
+        gap: 10px;  /* Spacing between items for mobile */
+        justify-content: flex-end; /* Align items to the right */
     }
-
+    
     .navbar ul li a, .navbar ul li button {
-        padding: 10px;
+        padding: 8px 12px;  /* Slightly bigger padding */
+        font-size: 1rem;  /* Normal font size */
+        min-width: 0; /* Allow buttons to shrink */
     }
-
+    
     .plus-icon {
-        font-size: 2rem;  /* Make the plus sign larger on mobile */
-        text-align: center;
+        font-size: 1.8rem;  /* Bigger plus icon */
     }
-
-    .navbar ul li {
-        display: flex;  /* Makes the li itself a flex container */
-        justify-content: center;
+    
+    .searchBar button {
+        padding: 8px 10px;  /* Bigger search button */
+        font-size: 1rem;
+    }
+    
+    /* Center the mobile search bar */
+    .mobileSearch {
+        width: 100%;
+        margin: 10px auto 0 auto;
+        display: block;
     }
 }
